@@ -1,0 +1,4672 @@
+{
+  "name": "AI Voice Agent - Lead Calling & Appointment Booking (Vapi + n8n)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Telefon": "={{ $json.phone }}",
+            "Antwortstatus": "Antwort steht aus"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        -176
+      ],
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "const contact = $input.first().json.body.data.contact;\n\nconst simplifiedContact = {\n  name: contact?.fields?.surname,\n  email: contact?.email,\n  phone: contact?.fields?.phone_number\n};\n\nreturn simplifiedContact;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -192
+      ],
+      "name": "Normalize Lead Data"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        -192
+      ],
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rowsInSheet = $input.all().map((item) => item.json);\n\nconsole.log(\"rowsInSheet => \", rowsInSheet);\n\nconst normalizedLeads = $(\"Normalize Lead Data\")\n  .all()\n  .map(({ json: item }) => {\n    console.log(\"item => \", item);\n\n    const emailLower = item.email ? item.email.toLowerCase() : \"\";\n    const phone = item.phone || \"\";\n\n    // Built-in JS check for duplicates in rowsInSheet\n    const isDuplicate = rowsInSheet.some((row) =>\n      row.Email && row.Telefon\n        ? row.Email.toLowerCase() === emailLower && row.Telefon === phone\n        : false\n    );\n\n    return {\n      name: item.name || \"\",\n      email: item.email || \"\",\n      phone: item.phone || \"\",\n      isDuplicate: isDuplicate,\n    };\n  });\n\nreturn normalizedLeads;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -192
+      ],
+      "name": "Check Duplicate",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.isDuplicate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -192
+      ],
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "listId": "YOUR_TRELLO_ID",
+        "name": "={{ $('Append row in sheet').item.json.Name }} | {{ $('Append row in sheet').item.json.Email }}",
+        "description": "=Name = {{ $('Append row in sheet').item.json.Name }}\nEmail = {{ $('Append row in sheet').item.json.Email }}\nTelefon = {{ $('Append row in sheet').item.json.Telefon }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1888,
+        -176
+      ],
+      "name": "Create a card"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -112,
+        304
+      ],
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.Antwortstatus }}",
+              "rightValue": "Antwort steht aus",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.Telefon.toString() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        304
+      ],
+      "name": "Filter Status & Phone"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "PhoneId",
+              "value": "YOUR_VAPI_ID",
+              "type": "string"
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "AssistanttId",
+              "value": "YOUR_VAPI_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        304
+      ],
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"assistantId\": \"{{ $('Config').item.json.AssistanttId }}\",\n    \"phoneNumberId\": \"{{ $('Config').item.json.PhoneId }}\",\n    \"customer\": { \"number\": \"+{{ $json.Telefon }}\" }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        304
+      ],
+      "name": "Vapi Phone Call"
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent calling user",
+        "height": 304,
+        "width": 2128
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        192
+      ],
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.analysis.structuredData.is_confirmed_for_a_meeting }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "YOUR_VAPI_ID"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "True"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "False"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1776,
+        2400
+      ],
+      "name": "Appointment Confirmation"
+    },
+    {
+      "parameters": {
+        "content": "## Appointment Confirmation",
+        "height": 1072,
+        "width": 4448
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        2000
+      ],
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields1').item.json.INTERNAL_TEAM_EMAIL }}",
+        "subject": "Lead Appointment Confirmed",
+        "message": "=<p>Hi Team,</p>\n\n<p>A new lead has successfully confirmed an appointment. 🎉</p>\n\n<p>I’ll keep you updated with any further details or progress.</p>\n\n<p>Best regards,</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2368,
+        2032
+      ],
+      "name": "Send Internal Email to Team"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Confirmation",
+        "message": "=<p>Hi <b>{{$('Get row(s) in sheet2').item.json.Name}}</b>,</p>\n\n<p>Your appointment has been successfully confirmed. 🎉</p>\n\n<p>We look forward to speaking with you soon.</p>\n\n<p>Thank you,</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2160,
+        2032
+      ],
+      "name": "Send Confirmation Email1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        3392
+      ],
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Error Handling",
+        "height": 320,
+        "width": 480,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        3248
+      ],
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        2432
+      ],
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        96,
+        2432
+      ],
+      "name": "Get row(s) in sheet2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.vapi_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        2432
+      ],
+      "name": "Filter Status & Phone1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.vapi_id }}\n\n",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        2432
+      ],
+      "name": "Get Vapi Status"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "=",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1168,
+        2432
+      ],
+      "name": "Check if call ended &"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Antwortstatus": "Antwort steht aus",
+            "vapi_id": "={{ $json.id }}",
+            "Telefon": "={{ $json.customer.number.replace(\"+\", \"\") }}",
+            "last_call_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "Telefon"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1232,
+        304
+      ],
+      "name": "Update row in sheet"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.analysis?.summary }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        2416
+      ],
+      "name": "Check If Analyze Data Exist"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Filter Status & Phone1').item.json.Email }}",
+            "Antwortstatus": "Abgelehnt"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2256,
+        2608
+      ],
+      "name": "Update row in sheet2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Filter Status & Phone1').item.json.Email }}",
+            "Antwortstatus": "Angenommen"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2336,
+        2384
+      ],
+      "name": "Update row in sheet3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Append row in sheet').item.json.Email }}",
+            "trello_card_id": "={{ $json.id }}",
+            "event_id": "={{ $(\"Create Event For Call\").item.json.id }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1632,
+        -176
+      ],
+      "name": "Update Trello Card"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        2624
+      ],
+      "name": "Wait 10sec"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.Email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2480,
+        2608
+      ],
+      "name": "Get row(s) in sheet3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.trello_card_id }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        2608
+      ],
+      "name": "Get card Information"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        2928,
+        2816
+      ],
+      "name": "Delete a card",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "listId": "={{ $json.id }}",
+        "name": "={{ $('Get card Information').item.json.name }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        3344,
+        2592
+      ],
+      "name": "Create New Card on Complete"
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "getAll",
+        "id": "YOUR_TRELLO_BOARD_ID",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        2608
+      ],
+      "name": "Get many lists"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Appointment agreed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3104,
+        2608
+      ],
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields1').item.json.INTERNAL_TEAM_EMAIL }}",
+        "subject": "Lead Appointment Not Scheduled",
+        "message": "=<p>Hi Team,</p>\n\n<p>We attempted to schedule an appointment with a new lead, but unfortunately, it was not successful at this time.</p>\n\n<p>Best regards,</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2080,
+        2816
+      ],
+      "name": "Send Internal Email to Team1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "test"
+        },
+        "start": "={{ new Date(\n  $('Appointment Confirmation').item.json.analysis.structuredData.meeting_scheduled_at * 1000\n).toUTCString() \n}}",
+        "end": "={{ new Date(\n  $('Appointment Confirmation').item.json.analysis.structuredData.meeting_scheduled_at * 1000\n).toUTCString() \n}}",
+        "additionalFields": {
+          "conferenceDataUi": {},
+          "description": "={{ $('Filter Status & Phone1').item.json.Email }}",
+          "summary": "Appointment "
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2608,
+        2144
+      ],
+      "name": "Create an event"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.trello_card_id }}"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        2272
+      ],
+      "name": "Get card Information2"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        3152,
+        2080
+      ],
+      "name": "Delete a card2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "listId": "={{ $json.id }}",
+        "name": "={{ $('Get row(s) in sheet4').item.json.Name }} | {{ $('Get row(s) in sheet4').item.json.Email }}",
+        "description": "=Name = {{ $('Get row(s) in sheet4').item.json.Name }}\nEmail = {{ $('Get row(s) in sheet4').item.json.Email }}\nTelefon = {{ $('Get row(s) in sheet4').item.json.Telefon }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        2128
+      ],
+      "name": "Create New Card on Complete2"
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "getAll",
+        "id": "YOUR_TRELLO_BOARD_ID",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        3136,
+        2256
+      ],
+      "name": "Get many lists2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Appointment agreed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3328,
+        2256
+      ],
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.Email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2608,
+        2384
+      ],
+      "name": "Get row(s) in sheet4",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        400,
+        2432
+      ],
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "sendTo": "team@example.com",
+        "subject": "n8n Workflow Error: Automation",
+        "message": "=<p>Hello Team,</p>\n\n<p>An error occurred in the workflow <b>{{ $json.workflow.name }}</b>. Details of the execution are as follows:</p>\n\n<ul>\n  <li><b>Error Message:</b> {{ $json.execution.error.message }}</li>\n  <li><b>Execution ID:</b> {{ $json.execution.id }}</li>\n  <li><b>Workflow URL:</b> <a href=\"{{ $json.execution.url }}\">{{ $json.execution.url }}</a></li>\n  <li><b>Retry Of Execution ID:</b> {{ $json.execution.retryOf }}</li>\n  <li><b>Last Node Executed:</b> {{ $json.execution.lastNodeExecuted }}</li>\n  <li><b>Mode:</b> {{ $json.execution.mode }}</li>\n</ul>\n\n<p>Thank you</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        3392
+      ],
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.body.data.contact.fields.surname }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.body.data.contact.fields.phone_number }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.body.account.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        -192
+      ],
+      "name": "Filter empty name & number"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "keepFirstRow": true
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5120,
+        944
+      ],
+      "name": "Clear sheet",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "John Doe",
+            "Telefon": "+15555550123",
+            "Email": "team@example.com",
+            "Antwortstatus": "Antwort steht aus",
+            "vapi_id": "YOUR_VAPI_ID",
+            "trello_card_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Spalte 2"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5632,
+        832
+      ],
+      "name": "Yes",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "listId": "YOUR_TRELLO_ID",
+        "name": "=John Doe | team@example.com",
+        "description": "=",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        5392,
+        944
+      ],
+      "name": "Create a card1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "John Doe",
+            "Telefon": "+15555550123",
+            "Email": "team@example.com",
+            "Antwortstatus": "Antwort steht aus",
+            "vapi_id": "YOUR_VAPI_ID",
+            "trello_card_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Spalte 2"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5648,
+        1120
+      ],
+      "name": "No",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Mock for testing",
+        "height": 656,
+        "width": 992
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4944,
+        720
+      ],
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Telefon": "={{ $json.Telefon }}",
+            "user_call_count": "={{ $json.user_call_count+1 }}",
+            "last_call_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "Telefon"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        304
+      ],
+      "name": "Update Call Count"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_VAPI_ID",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -560,
+        -192
+      ],
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "start": "={{ new Date( $json.start_slot )}}\n",
+        "end": "={{ new Date(new Date($json.start_slot).getTime() + 1*60*60*1000) }}\n",
+        "additionalFields": {
+          "summary": "={{ $('Append row in sheet').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        -176
+      ],
+      "name": "Create Event For Call"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "triggerOn": "eventStarted",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        304
+      ],
+      "name": "Time to call the user"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1136
+      ],
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Retry if the user doesn’t pick up the call.\n",
+        "height": 1248,
+        "width": 4192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        624
+      ],
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.vapi_id }}\n\n",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1136
+      ],
+      "name": "Get Vapi Status1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        1136
+      ],
+      "name": "Get row(s) in sheet5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.vapi_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        1136
+      ],
+      "name": "Filter Status & Phone2"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        1136
+      ],
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.endedReason }}",
+              "rightValue": "customer-did-not-answer",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        992
+      ],
+      "name": "Check if customer didn't answer"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $json.endedReason }}",
+              "rightValue": "customer-busy",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        1296
+      ],
+      "name": "Check if customer is busy answer1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.user_call_count) }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "YOUR_VAPI_ID"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2nd Attempt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "YOUR_VAPI_ID",
+                    "leftValue": "={{ Number($json.user_call_count) }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3rd Attempt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "YOUR_VAPI_ID",
+                    "leftValue": "={{ Number($json.user_call_count) }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4th Attempt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1280,
+        1120
+      ],
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "vapi_id",
+              "lookupValue": "={{ $json.data?.[0].id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        1136
+      ],
+      "name": "Get row(s) in sheet6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "leftValue": "={{ $('Time to call the user').item.json.summary }}",
+              "rightValue": "={{ $json.Email }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        304
+      ],
+      "name": "Get Current Item"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.summary }}",
+            "event_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2320,
+        848
+      ],
+      "name": "Update Trello Card2"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "eventId": "={{ $('Switch').item.json.event_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1776,
+        656
+      ],
+      "name": "Delete an event",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.summary }}",
+            "event_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2368,
+        1248
+      ],
+      "name": "Update Trello Card3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "eventId": "={{ $('Switch').item.json.event_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1776,
+        1040
+      ],
+      "name": "Delete an event1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.summary }}",
+            "event_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2384,
+        1680
+      ],
+      "name": "Update Trello Card4"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "eventId": "={{ $('Switch').item.json.event_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        1440
+      ],
+      "name": "Delete an event2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Lead Generation\n",
+        "height": 464,
+        "width": 2976
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -336
+      ],
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from datetime import datetime, timedelta, time\nimport pytz\n\n# Set your desired timezone\nTIMEZONE = \"Europe/Berlin\"\n# TIMEZONE = \"Asia/Dhaka\"\ntz = pytz.timezone(TIMEZONE)\n\n# Define opening hours\nopening_hours = {\n    \"Monday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Tuesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Wednesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Thursday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Friday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Saturday\": [],\n    \"Sunday\": [],\n}\n\ndef get_next_slot(now):\n    weekdays = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"]\n    \n    for i in range(7):\n        day = now + timedelta(days=i)\n        day_name = weekdays[day.weekday()]\n        slots = opening_hours[day_name]\n        \n        for start, end in slots:\n            start_datetime = tz.localize(datetime.combine(day.date(), start))\n            end_datetime = tz.localize(datetime.combine(day.date(), end))\n            \n            if start_datetime <= now <= end_datetime:\n                # Current time is inside a working slot\n                start_slot = now + timedelta(minutes=45) # 45\n                # Make sure start_slot does not go past end of slot\n                if start_slot > end_datetime:\n                    continue  # Skip to next slot\n                end_slot = start_slot + timedelta(minutes=5)\n                return start_slot, min(end_slot, end_datetime)\n            \n            elif start_datetime > now:\n                # Next future slot\n                return start_datetime, end_datetime\n    \n    return None, None\n\n# Current time in specified timezone\nnow = datetime.now(tz)\nstart_slot, end_slot = get_next_slot(now)\n\n# Return for n8n\nitem = {\n    \"start_slot\": start_slot.isoformat() if start_slot else None,\n    \"end_slot\": end_slot.isoformat() if end_slot else None,\n    \"timezone\": TIMEZONE\n}\n\nreturn item\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -176
+      ],
+      "name": "Get Working Hours"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { test: \"hello world\" } }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5312,
+        272
+      ],
+      "name": "Opening Hours"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1136
+      ],
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "name",
+              "value": "John Doe",
+              "type": "string"
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "email",
+              "value": "john@example.com",
+              "type": "string"
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "phone",
+              "value": "+15555550123",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5040,
+        256
+      ],
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from datetime import datetime, timedelta, time\nimport pytz\n\n# Set your desired timezone\nTIMEZONE = \"Europe/Berlin\"\n# TIMEZONE = \"Asia/Dhaka\"\ntz = pytz.timezone(TIMEZONE)\n\n# Define opening hours\nopening_hours = {\n    \"Monday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Tuesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Wednesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Thursday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Friday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Saturday\": [],\n    \"Sunday\": [],\n}\n\ndef get_next_slot(now):\n    weekdays = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"]\n    \n    for i in range(7):\n        day = now + timedelta(days=i)\n        day_name = weekdays[day.weekday()]\n        slots = opening_hours[day_name]\n        \n        for start, end in slots:\n            start_datetime = tz.localize(datetime.combine(day.date(), start))\n            end_datetime = tz.localize(datetime.combine(day.date(), end))\n            \n            if start_datetime <= now <= end_datetime:\n                # Current time is inside a working slot\n                start_slot = now + timedelta(minutes=15)\n                # Make sure start_slot does not go past end of slot\n                if start_slot > end_datetime:\n                    continue  # Skip to next slot\n                end_slot = start_slot + timedelta(minutes=5)\n                return start_slot, min(end_slot, end_datetime)\n            \n            elif start_datetime > now:\n                # Next future slot\n                return start_datetime, end_datetime\n    \n    return None, None\n\n# Current time in specified timezone\nnow = datetime.now(tz)\nstart_slot, end_slot = get_next_slot(now)\n\n# Return for n8n\nitem = {\n    \"start_slot\": start_slot.isoformat() if start_slot else None,\n    \"end_slot\": end_slot.isoformat() if end_slot else None,\n    \"timezone\": TIMEZONE\n}\n\nreturn item\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        848
+      ],
+      "name": "Get Working Hours1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "start": "={{ new Date( $json.start_slot )}}\n",
+        "end": "={{ new Date(new Date($json.start_slot).getTime() + 1*60*60*1000) }}\n",
+        "additionalFields": {
+          "summary": "={{ $('Switch').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2064,
+        848
+      ],
+      "name": "Create Event For Call4"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from datetime import datetime, timedelta, time\nimport pytz\n\n# Set your desired timezone\nTIMEZONE = \"Europe/Berlin\"\n# TIMEZONE = \"Asia/Dhaka\"\ntz = pytz.timezone(TIMEZONE)\n\n# Define opening hours\nopening_hours = {\n    \"Monday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Tuesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Wednesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Thursday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Friday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Saturday\": [],\n    \"Sunday\": [],\n}\n\ndef get_next_slot(now):\n    weekdays = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"]\n    \n    for i in range(7):\n        day = now + timedelta(days=i)\n        day_name = weekdays[day.weekday()]\n        slots = opening_hours[day_name]\n        \n        for start, end in slots:\n            start_datetime = tz.localize(datetime.combine(day.date(), start))\n            end_datetime = tz.localize(datetime.combine(day.date(), end))\n            \n            if start_datetime <= now <= end_datetime:\n                # Current time is inside a working slot\n                start_slot = now + timedelta(day=1)\n                # Make sure start_slot does not go past end of slot\n                if start_slot > end_datetime:\n                    continue  # Skip to next slot\n                end_slot = start_slot + timedelta(minutes=5)\n                return start_slot, min(end_slot, end_datetime)\n            \n            elif start_datetime > now:\n                # Next future slot\n                return start_datetime, end_datetime\n    \n    return None, None\n\n# Current time in specified timezone\nnow = datetime.now(tz)\nstart_slot, end_slot = get_next_slot(now)\n\n# Return for n8n\nitem = {\n    \"start_slot\": start_slot.isoformat() if start_slot else None,\n    \"end_slot\": end_slot.isoformat() if end_slot else None,\n    \"timezone\": TIMEZONE\n}\n\nreturn item\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        1248
+      ],
+      "name": "Get Working Hours2"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "start": "={{ new Date( $json.start_slot )}}\n",
+        "end": "={{ new Date(new Date($json.start_slot).getTime() + 1*60*60*1000) }}\n",
+        "additionalFields": {
+          "summary": "={{ $('Switch').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2096,
+        1248
+      ],
+      "name": "Create Event For Call5"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from datetime import datetime, timedelta, time\nimport pytz\n\n# Set your desired timezone\nTIMEZONE = \"Europe/Berlin\"\n# TIMEZONE = \"Asia/Dhaka\"\ntz = pytz.timezone(TIMEZONE)\n\n# Define opening hours\nopening_hours = {\n    \"Monday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Tuesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Wednesday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Thursday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Friday\": [(time(8, 0), time(12, 0)), (time(13, 15), time(18, 0))],\n    \"Saturday\": [],\n    \"Sunday\": [],\n}\n\ndef get_next_slot(now):\n    weekdays = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"]\n    \n    for i in range(7):\n        day = now + timedelta(days=i)\n        day_name = weekdays[day.weekday()]\n        slots = opening_hours[day_name]\n        \n        for start, end in slots:\n            start_datetime = tz.localize(datetime.combine(day.date(), start))\n            end_datetime = tz.localize(datetime.combine(day.date(), end))\n            \n            if start_datetime <= now <= end_datetime:\n                # Current time is inside a working slot\n                start_slot = now + timedelta(days=1, minutes=15)\n                # Make sure start_slot does not go past end of slot\n                if start_slot > end_datetime:\n                    continue  # Skip to next slot\n                end_slot = start_slot + timedelta(minutes=5)\n                return start_slot, min(end_slot, end_datetime)\n            \n            elif start_datetime > now:\n                # Next future slot\n                return start_datetime, end_datetime\n    \n    return None, None\n\n# Current time in specified timezone\nnow = datetime.now(tz)\nstart_slot, end_slot = get_next_slot(now)\n\n# Return for n8n\nitem = {\n    \"start_slot\": start_slot.isoformat() if start_slot else None,\n    \"end_slot\": end_slot.isoformat() if end_slot else None,\n    \"timezone\": TIMEZONE\n}\n\nreturn item\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        1680
+      ],
+      "name": "Get Working Hours3"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "team@example.com",
+          "mode": "list",
+          "cachedResultName": "n8n_events"
+        },
+        "start": "={{ new Date( $json.start_slot )}}\n",
+        "end": "={{ new Date(new Date($json.start_slot).getTime() + 1*60*60*1000) }}\n",
+        "additionalFields": {
+          "summary": "={{ $('Switch').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2096,
+        1680
+      ],
+      "name": "Create Event For Call6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "INTERNAL_TEAM_EMAIL",
+              "value": "team@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        2432
+      ],
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "vapi_id",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1968,
+        2064
+      ],
+      "name": "Get row(s) in sheet7",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "name",
+              "value": "John Doe",
+              "type": "string"
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "email",
+              "value": "john@example.com",
+              "type": "string"
+            },
+            {
+              "id": "YOUR_VAPI_ID",
+              "name": "phone",
+              "value": "+15555550123",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        -496
+      ],
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Append row in sheet').item.json.Email }}",
+            "trello_card_id": "={{ $json.id }}",
+            "event_id": "={{ $(\"Create Event For Call\").item.json.id }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Eingangsdatum",
+              "displayName": "Eingangsdatum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Immobilientyp",
+              "displayName": "Immobilientyp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Antwortstatus",
+              "displayName": "Antwortstatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hinweise",
+              "displayName": "Hinweise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Termin am",
+              "displayName": "Termin am",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "vapi_id",
+              "displayName": "vapi_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "trello_card_id",
+              "displayName": "trello_card_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "user_call_count",
+              "displayName": "user_call_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_call_at",
+              "displayName": "last_call_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2160,
+        -176
+      ],
+      "name": "Update Trello Card1"
+    }
+  ],
+  "connections": {
+    "Normalize Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Check Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Duplicate": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Working Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Get Current Item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Status & Phone": {
+      "main": [
+        [
+          {
+            "node": "Update Call Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appointment Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Internal Email to Team1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Internal Email to Team": {
+      "main": [
+        []
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vapi Phone Call": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Status & Phone1": {
+      "main": [
+        [
+          {
+            "node": "Get Vapi Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Vapi Status": {
+      "main": [
+        [
+          {
+            "node": "Check if call ended &",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if call ended &": {
+      "main": [
+        [
+          {
+            "node": "Check If Analyze Data Exist",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 10sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Check If Analyze Data Exist": {
+      "main": [
+        [
+          {
+            "node": "Appointment Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a card": {
+      "main": [
+        [
+          {
+            "node": "Update Trello Card1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10sec": {
+      "main": [
+        [
+          {
+            "node": "Get Vapi Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Get card Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get card Information": {
+      "main": [
+        [
+          {
+            "node": "Delete a card",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Card on Complete": {
+      "main": [
+        []
+      ]
+    },
+    "Get many lists": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Create New Card on Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        []
+      ]
+    },
+    "Get card Information2": {
+      "main": [
+        [
+          {
+            "node": "Get many lists2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Delete a card2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many lists2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Create New Card on Complete2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Get card Information2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Filter Status & Phone1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email1": {
+      "main": [
+        [
+          {
+            "node": "Send Internal Email to Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter empty name & number": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet": {
+      "main": [
+        [
+          {
+            "node": "Create a card1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a card1": {
+      "main": [
+        [
+          {
+            "node": "Yes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Call Count": {
+      "main": [
+        [
+          {
+            "node": "Vapi Phone Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter empty name & number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Trello Card": {
+      "main": [
+        [
+          {
+            "node": "Create a card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time to call the user": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet5": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Filter Status & Phone2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Status & Phone2": {
+      "main": [
+        [
+          {
+            "node": "Get Vapi Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Vapi Status1": {
+      "main": [
+        [
+          {
+            "node": "Check if customer didn't answer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check if customer is busy answer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if customer didn't answer": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if customer is busy answer1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get row(s) in sheet6": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event For Call": {
+      "main": [
+        [
+          {
+            "node": "Update Trello Card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Delete an event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Working Hours1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete an event1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Working Hours2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete an event2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Working Hours3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Item": {
+      "main": [
+        [
+          {
+            "node": "Filter Status & Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Trello Card2": {
+      "main": [
+        []
+      ]
+    },
+    "Get Working Hours": {
+      "main": [
+        [
+          {
+            "node": "Create Event For Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Get Working Hours1": {
+      "main": [
+        [
+          {
+            "node": "Create Event For Call4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event For Call4": {
+      "main": [
+        [
+          {
+            "node": "Update Trello Card2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Working Hours2": {
+      "main": [
+        [
+          {
+            "node": "Create Event For Call5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event For Call5": {
+      "main": [
+        [
+          {
+            "node": "Update Trello Card3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Working Hours3": {
+      "main": [
+        [
+          {
+            "node": "Create Event For Call6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event For Call6": {
+      "main": [
+        [
+          {
+            "node": "Update Trello Card4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet7": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
